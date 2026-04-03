@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataCore — Kit de Branding Completo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1D4ED8;
+    --blue-light: #2563EB;
+    --blue-dark: #1e3a8a;
+    --orange: #F97316;
+    --orange-light: #FB923C;
+    --green: #16A34A;
+    --navy: #0F172A;
+    --navy-2: #1e293b;
+    --slate: #64748B;
+    --ice: #F8FAFC;
+    --white: #FFFFFF;
+    --font: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  body {
+    font-family: var(--font);
+    background: #f1f5f9;
+    color: var(--navy);
+    padding: 40px 20px;
+  }
+  h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+  h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; color: var(--navy); }
+  .section-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--blue); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: #e2e8f0;
+  }
+  .page-header {
+    max-width: 1100px; margin: 0 auto 48px;
+    background: var(--navy); color: white;
+    border-radius: 20px; padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .page-header p { color: #94a3b8; margin-top: 6px; font-size: 0.95rem; }
+  .tag {
+    background: rgba(29,78,216,0.2); color: #93c5fd;
+    font-size: 0.75rem; font-weight: 600; padding: 6px 14px;
+    border-radius: 999px; letter-spacing: 0.05em;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .card {
+    background: white; border-radius: 16px; padding: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .card-dark {
+    background: var(--navy); border-radius: 16px; padding: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .card-label {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--slate); margin-bottom: 20px;
+  }
+  .card-dark .card-label { color: #475569; }
+  .logo-display { display: flex; align-items: center; justify-content: center; min-height: 100px; }
+
+  /* ─── LOGO SVG STYLES ─── */
+  .logo-horizontal { display: flex; align-items: center; gap: 14px; }
+  .logo-icon-wrap {
+    width: 48px; height: 48px; flex-shrink: 0;
+  }
+  .logo-wordmark {
+    font-family: var(--font);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .logo-wordmark span { color: var(--orange); }
+  .logo-subtitle {
+    font-family: var(--font);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-top: 3px;
+  }
+  .logo-dark-text { color: white; }
+  .logo-dark-text .logo-subtitle { color: #64748b; }
+
+  /* ─── COLORS ─── */
+  .color-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .color-chip {
+    flex: 1; min-width: 120px; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .color-swatch { height: 72px; }
+  .color-info { background: white; padding: 12px 14px; }
+  .color-name { font-size: 0.8rem; font-weight: 700; }
+  .color-hex { font-family: var(--mono); font-size: 0.75rem; color: var(--slate); margin-top: 2px; }
+  .color-role { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
+
+  /* ─── LINKEDIN BANNER ─── */
+  .linkedin-banner {
+    width: 100%;
+    aspect-ratio: 1584/396;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: var(--navy);
+  }
+
+  /* ─── POSTS ─── */
+  .posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .post-wrapper { border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+  .post-square { width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden; }
+  .post-reel { width: 100%; aspect-ratio: 9/16; max-height: 520px; position: relative; overflow: hidden; border-radius: 12px; }
+  .post-linkedin-card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 24px; font-size: 0.88rem; line-height: 1.6; color: var(--navy-2);
+  }
+  .post-linkedin-card .pl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .pl-avatar {
+    width: 44px; height: 44px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .pl-name { font-weight: 700; font-size: 0.88rem; }
+  .pl-meta { font-size: 0.72rem; color: var(--slate); }
+  .pl-body { white-space: pre-wrap; font-size: 0.85rem; line-height: 1.65; }
+  .pl-hashtags { margin-top: 12px; color: var(--blue-light); font-size: 0.82rem; font-weight: 500; }
+
+  .section-wrap { max-width: 1100px; margin: 0 auto 56px; }
+
+  /* ─── CAROUSEL ─── */
+  .carousel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .carousel-slide {
+    aspect-ratio: 1/1; border-radius: 12px; overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 20px;
+  }
+
+  /* Print-friendly section breaks */
+  .page-break { height: 40px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ PAGE HEADER ══════════════ -->
+<div class="page-header">
+  <div>
+    <div class="tag">Branding Kit v1.0 · Abril 2026</div>
+    <h1 style="margin-top:12px; font-size:2.2rem;">DataCore</h1>
+    <p>Logos · Colores · Tipografías · LinkedIn Banner · Publicaciones RRSS</p>
+  </div>
+  <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- DataCore icon: hexagonal data-node -->
+    <polygon points="40,6 70,22 70,58 40,74 10,58 10,22" fill="none" stroke="#1D4ED8" stroke-width="3.5"/>
+    <polygon points="40,18 60,29 60,51 40,62 20,51 20,29" fill="none" stroke="#F97316" stroke-width="2" opacity="0.7"/>
+    <circle cx="40" cy="40" r="8" fill="#1D4ED8"/>
+    <line x1="40" y1="6" x2="40" y2="18" stroke="#1D4ED8" stroke-width="2"/>
+    <line x1="40" y1="62" x2="40" y2="74" stroke="#1D4ED8" stroke-width="2"/>
+    <line x1="10" y1="22" x2="20" y2="29" stroke="#1D4ED8" stroke-width="2"/>
+    <line x1="60" y1="29" x2="70" y2="22" stroke="#1D4ED8" stroke-width="2"/>
+    <line x1="10" y1="58" x2="20" y2="51" stroke="#1D4ED8" stroke-width="2"/>
+    <line x1="60" y1="51" x2="70" y2="58" stroke="#1D4ED8" stroke-width="2"/>
+  </svg>
+</div>
+
+
+<!-- ══════════════ SECCIÓN 1: LOGOS ══════════════ -->
+<div class="section-wrap">
+  <div class="section-label">01 — Sistema de Logo · 4 Versiones</div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+
+    <!-- LOGO 1: Horizontal Color (fondo claro) -->
+    <div class="card">
+      <div class="card-label">Versión 1 · Horizontal Color · Fondo Claro</div>
+      <div class="logo-display">
+        <div class="logo-horizontal">
+          <svg class="logo-icon-wrap" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="#0F172A" stroke="#1D4ED8" stroke-width="2"/>
+            <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#F97316" stroke-width="1.5" opacity="0.9"/>
+            <circle cx="24" cy="24" r="5.5" fill="#1D4ED8"/>
+            <line x1="24" y1="3" x2="24" y2="11" stroke="#1D4ED8" stroke-width="1.5"/>
+            <line x1="24" y1="37" x2="24" y2="45" stroke="#1D4ED8" stroke-width="1.5"/>
+            <line x1="6" y1="13" x2="12" y2="18" stroke="#1D4ED8" stroke-width="1.5"/>
+            <line x1="36" y1="18" x2="42" y2="13" stroke="#1D4ED8" stroke-width="1.5"/>
+            <line x1="6" y1="35" x2="12" y2="30" stroke="#1D4ED8" stroke-width="1.5"/>
+            <line x1="36" y1="30" x2="42" y2="35" stroke="#1D4ED8" stroke-width="1.5"/>
+          </svg>
+          <div>
+            <div class="logo-wordmark" style="color:#0F172A;">Data<span>Core</span></div>
+            <div class="logo-subtitle" style="color:#64748B;">Consultoría · Datos · Automatización</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.72rem;color:#94a3b8;margin-top:16px;">Uso: LinkedIn, emails, presentaciones, web header</p>
+    </div>
+
+    <!-- LOGO 2: Horizontal Negativo (fondo oscuro) -->
+    <div class="card-dark">
+      <div class="card-label">Versión 2 · Horizontal Negativo · Fondo Oscuro</div>
+      <div class="logo-display">
+        <div class="logo-horizontal">
+          <svg class="logo-icon-wrap" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(29,78,216,0.25)" stroke="#3b82f6" stroke-width="2"/>
+            <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#F97316" stroke-width="1.5" opacity="0.9"/>
+            <circle cx="24" cy="24" r="5.5" fill="#3b82f6"/>
+            <line x1="24" y1="3" x2="24" y2="11" stroke="#3b82f6" stroke-width="1.5"/>
+            <line x1="24" y1="37" x2="24" y2="45" stroke="#3b82f6" stroke-width="1.5"/>
+            <line x1="6" y1="13" x2="12" y2="18" stroke="#3b82f6" stroke-width="1.5"/>
+            <line x1="36" y1="18" x2="42" y2="13" stroke="#3b82f6" stroke-width="1.5"/>
+            <line x1="6" y1="35" x2="12" y2="30" stroke="#3b82f6" stroke-width="1.5"/>
+            <line x1="36" y1="30" x2="42" y2="35" stroke="#3b82f6" stroke-width="1.5"/>
+          </svg>
+          <div class="logo-dark-text">
+            <div class="logo-wordmark" style="color:white;">Data<span>Core</span></div>
+            <div class="logo-subtitle">Consultoría · Datos · Automatización</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.72rem;color:#475569;margin-top:16px;">Uso: LinkedIn banner, Instagram, fondos oscuros, footer</p>
+    </div>
+
+  </div>
+
+  <div class="grid-4">
+
+    <!-- LOGO 3: Ícono cuadrado (perfil Instagram/LinkedIn) -->
+    <div class="card-dark" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div class="card-label" style="color:#475569;align-self:flex-start;">Versión 3 · Ícono Cuadrado · Perfil RRSS</div>
+      <div style="
+        width:120px;height:120px;border-radius:22px;
+        background:linear-gradient(135deg,#1D4ED8,#0F172A);
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 8px 24px rgba(29,78,216,0.4);
+      ">
+        <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+          <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(255,255,255,0.08)" stroke="#60a5fa" stroke-width="2"/>
+          <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#F97316" stroke-width="1.5"/>
+          <circle cx="24" cy="24" r="5.5" fill="#3b82f6"/>
+          <line x1="24" y1="3" x2="24" y2="11" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="24" y1="37" x2="24" y2="45" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="6" y1="13" x2="12" y2="18" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="36" y1="18" x2="42" y2="13" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="6" y1="35" x2="12" y2="30" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="36" y1="30" x2="42" y2="35" stroke="#60a5fa" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div style="font-family:var(--font);font-size:0.85rem;font-weight:700;color:white;">DataCore</div>
+      <p style="font-size:0.7rem;color:#475569;text-align:center;">400×400px · Foto de perfil Instagram y LinkedIn</p>
+    </div>
+
+    <!-- LOGO 4: Monocromático -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div class="card-label">Versión 4 · Monocromático</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <svg width="52" height="52" viewBox="0 0 48 48" fill="none">
+          <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="none" stroke="#0F172A" stroke-width="2.5"/>
+          <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#0F172A" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="24" cy="24" r="5.5" fill="#0F172A"/>
+          <line x1="24" y1="3" x2="24" y2="11" stroke="#0F172A" stroke-width="1.5"/>
+          <line x1="24" y1="37" x2="24" y2="45" stroke="#0F172A" stroke-width="1.5"/>
+          <line x1="6" y1="13" x2="12" y2="18" stroke="#0F172A" stroke-width="1.5"/>
+          <line x1="36" y1="18" x2="42" y2="13" stroke="#0F172A" stroke-width="1.5"/>
+          <line x1="6" y1="35" x2="12" y2="30" stroke="#0F172A" stroke-width="1.5"/>
+          <line x1="36" y1="30" x2="42" y2="35" stroke="#0F172A" stroke-width="1.5"/>
+        </svg>
+        <div>
+          <div class="logo-wordmark" style="color:#0F172A;font-size:1.4rem;">Data<span style="color:#0F172A;">Core</span></div>
+        </div>
+      </div>
+      <!-- White version preview -->
+      <div style="background:#0F172A;width:100%;border-radius:10px;padding:16px;display:flex;align-items:center;gap:10px;justify-content:center;">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+          <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="none" stroke="white" stroke-width="2.5"/>
+          <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="24" cy="24" r="5.5" fill="white"/>
+          <line x1="24" y1="3" x2="24" y2="11" stroke="white" stroke-width="1.5"/>
+          <line x1="24" y1="37" x2="24" y2="45" stroke="white" stroke-width="1.5"/>
+          <line x1="6" y1="13" x2="12" y2="18" stroke="white" stroke-width="1.5"/>
+          <line x1="36" y1="18" x2="42" y2="13" stroke="white" stroke-width="1.5"/>
+          <line x1="6" y1="35" x2="12" y2="30" stroke="white" stroke-width="1.5"/>
+          <line x1="36" y1="30" x2="42" y2="35" stroke="white" stroke-width="1.5"/>
+        </svg>
+        <div class="logo-wordmark" style="color:white;font-size:1.2rem;">DataCore</div>
+      </div>
+      <p style="font-size:0.7rem;color:#94a3b8;text-align:center;">Documentos, papelería, sellos, bordados</p>
+    </div>
+
+    <!-- LOGO 5: Favicon/ícono mínimo -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div class="card-label">Versión 5 · Favicon · 32×32px</div>
+      <div style="display:flex;gap:16px;align-items:center;">
+        <div style="
+          width:64px;height:64px;border-radius:12px;
+          background:linear-gradient(135deg,#1D4ED8,#1e3a8a);
+          display:flex;align-items:center;justify-content:center;
+        ">
+          <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+            <polygon points="24,4 41,13.5 41,34.5 24,44 7,34.5 7,13.5" fill="none" stroke="white" stroke-width="3"/>
+            <circle cx="24" cy="24" r="6" fill="white"/>
+          </svg>
+        </div>
+        <div style="
+          width:40px;height:40px;border-radius:8px;
+          background:#1D4ED8;
+          display:flex;align-items:center;justify-content:center;
+        ">
+          <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+            <polygon points="24,4 41,13.5 41,34.5 24,44 7,34.5 7,13.5" fill="none" stroke="white" stroke-width="4"/>
+            <circle cx="24" cy="24" r="7" fill="white"/>
+          </svg>
+        </div>
+        <div style="
+          width:28px;height:28px;border-radius:5px;
+          background:#1D4ED8;
+          display:flex;align-items:center;justify-content:center;
+        ">
+          <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
+            <polygon points="24,4 41,13.5 41,34.5 24,44 7,34.5 7,13.5" fill="none" stroke="white" stroke-width="5"/>
+            <circle cx="24" cy="24" r="8" fill="white"/>
+          </svg>
+        </div>
+      </div>
+      <p style="font-size:0.7rem;color:#94a3b8;text-align:center;">Versión simplificada: funciona desde 28px</p>
+    </div>
+
+    <!-- CONSTRUCCIÓN DEL ÍCONO -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div class="card-label">Concepto del Ícono</div>
+      <div style="font-size:0.78rem;color:#475569;line-height:1.7;text-align:left;width:100%;">
+        <div style="margin-bottom:8px;font-weight:700;color:var(--navy);font-size:0.82rem;">DataCore Icon</div>
+        🔵 <strong>Hexágono exterior</strong> = estructura, datos, red<br>
+        🟠 <strong>Hexágono interior</strong> = núcleo del negocio<br>
+        ⚪ <strong>Nodo central</strong> = el core, el dato clave<br>
+        <span style="color:#94a3b8;">━━</span> <strong>Líneas conectoras</strong> = automatización, flujo<br><br>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;font-family:var(--mono);font-size:0.7rem;color:#475569;">
+          Data = el insumo<br>
+          Core = el núcleo que lo<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transforma en decisión
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════ SECCIÓN 2: COLORES ══════════════ -->
+<div class="section-wrap">
+  <div class="section-label">02 — Paleta de Colores Oficial</div>
+  <div class="card">
+    <div class="color-row">
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#1D4ED8;"></div>
+        <div class="color-info">
+          <div class="color-name">DataBlue</div>
+          <div class="color-hex">#1D4ED8</div>
+          <div class="color-role">Primario · 60%</div>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#F97316;"></div>
+        <div class="color-info">
+          <div class="color-name">DataOrange</div>
+          <div class="color-hex">#F97316</div>
+          <div class="color-role">Acento · 10%</div>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#16A34A;"></div>
+        <div class="color-info">
+          <div class="color-name">DataGreen</div>
+          <div class="color-hex">#16A34A</div>
+          <div class="color-role">Soporte · métricas ✓</div>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#0F172A;"></div>
+        <div class="color-info">
+          <div class="color-name">Navy Core</div>
+          <div class="color-hex">#0F172A</div>
+          <div class="color-role">Dark · fondos</div>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#F8FAFC; border:1px solid #e2e8f0;"></div>
+        <div class="color-info">
+          <div class="color-name">Ice White</div>
+          <div class="color-hex">#F8FAFC</div>
+          <div class="color-role">Light · fondos</div>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-swatch" style="background:#64748B;"></div>
+        <div class="color-info">
+          <div class="color-name">Slate Gray</div>
+          <div class="color-hex">#64748B</div>
+          <div class="color-role">Muted · texto 2°</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="background:#EFF6FF;border-radius:8px;padding:12px 18px;font-size:0.78rem;color:#1D4ED8;font-weight:600;">bg-blue-50 · Fondos de tarjetas azul</div>
+      <div style="background:#FFF7ED;border-radius:8px;padding:12px 18px;font-size:0.78rem;color:#F97316;font-weight:600;">bg-orange-50 · Fondos de tarjetas naranja</div>
+      <div style="background:#F0FDF4;border-radius:8px;padding:12px 18px;font-size:0.78rem;color:#16A34A;font-weight:600;">bg-green-50 · Fondos de tarjetas verde</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ SECCIÓN 3: LINKEDIN BANNER ══════════════ -->
+<div class="section-wrap">
+  <div class="section-label">03 — LinkedIn Banner · 1584 × 396px</div>
+
+  <!-- Banner completo -->
+  <div style="
+    width:100%;aspect-ratio:1584/396;border-radius:16px;overflow:hidden;
+    position:relative;background:#0F172A;
+    box-shadow:0 4px 24px rgba(0,0,0,0.2);
+  ">
+    <!-- Grid pattern -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.06;" viewBox="0 0 1584 396" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#60a5fa" stroke-width="0.8"/>
+        </pattern>
+      </defs>
+      <rect width="1584" height="396" fill="url(#grid)"/>
+    </svg>
+
+    <!-- Blue gradient glow left -->
+    <div style="
+      position:absolute;top:-80px;left:-80px;
+      width:400px;height:400px;border-radius:999px;
+      background:radial-gradient(circle, rgba(29,78,216,0.5) 0%, transparent 70%);
+    "></div>
+
+    <!-- Orange glow right -->
+    <div style="
+      position:absolute;bottom:-60px;right:200px;
+      width:300px;height:300px;border-radius:999px;
+      background:radial-gradient(circle, rgba(249,115,22,0.25) 0%, transparent 70%);
+    "></div>
+
+    <!-- Main content -->
+    <div style="
+      position:absolute;inset:0;display:flex;align-items:center;
+      padding:0 8%;gap:5%;
+    ">
+      <!-- LEFT: Logo + tagline -->
+      <div style="flex:1;min-width:0;">
+        <!-- Logo row -->
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+          <svg width="52" height="52" viewBox="0 0 48 48" fill="none">
+            <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(29,78,216,0.3)" stroke="#60a5fa" stroke-width="2.5"/>
+            <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#F97316" stroke-width="2" opacity="0.9"/>
+            <circle cx="24" cy="24" r="6" fill="#3b82f6"/>
+            <line x1="24" y1="3" x2="24" y2="11" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="24" y1="37" x2="24" y2="45" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="6" y1="13" x2="12" y2="18" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="36" y1="18" x2="42" y2="13" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="6" y1="35" x2="12" y2="30" stroke="#60a5fa" stroke-width="2"/>
+            <line x1="36" y1="30" x2="42" y2="35" stroke="#60a5fa" stroke-width="2"/>
+          </svg>
+          <div style="font-family:var(--font);font-size:2.4rem;font-weight:800;color:white;letter-spacing:-0.04em;line-height:1;">Data<span style="color:#F97316;">Core</span></div>
+        </div>
+        <div style="font-family:var(--font);font-size:1.1rem;color:#94a3b8;font-weight:500;letter-spacing:0.01em;">
+          Consultoría en Datos · Automatización · Paraguay
+        </div>
+        <div style="
+          margin-top:18px;font-family:var(--font);
+          font-size:1.5rem;font-weight:700;color:white;line-height:1.35;
+          max-width:520px;
+        ">
+          Transformamos tus datos en<br>
+          <span style="color:#60a5fa;">decisiones inteligentes</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Service pills -->
+      <div style="flex-shrink:0;display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+        <div style="
+          background:rgba(29,78,216,0.2);border:1px solid rgba(96,165,250,0.3);
+          border-radius:999px;padding:8px 20px;
+          font-family:var(--font);font-size:0.82rem;font-weight:600;color:#93c5fd;
+          white-space:nowrap;
+        ">📊 Automatización de Reportes</div>
+        <div style="
+          background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);
+          border-radius:999px;padding:8px 20px;
+          font-family:var(--font);font-size:0.82rem;font-weight:600;color:#fdba74;
+          white-space:nowrap;
+        ">⚡ Dashboards en Tiempo Real</div>
+        <div style="
+          background:rgba(22,163,74,0.15);border:1px solid rgba(34,197,94,0.3);
+          border-radius:999px;padding:8px 20px;
+          font-family:var(--font);font-size:0.82rem;font-weight:600;color:#86efac;
+          white-space:nowrap;
+        ">🛒 Sistemas POS Multi-Sucursal</div>
+        <div style="
+          background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);
+          border-radius:999px;padding:8px 20px;
+          font-family:var(--font);font-size:0.82rem;font-weight:600;color:#a5b4fc;
+          white-space:nowrap;
+        ">🔗 Integración de Sistemas</div>
+        <div style="
+          margin-top:6px;background:#1D4ED8;border-radius:8px;padding:8px 20px;
+          font-family:var(--font);font-size:0.82rem;font-weight:700;color:white;
+          white-space:nowrap;
+        ">📧 contacto@datacore.com</div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div style="
+      position:absolute;bottom:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#1D4ED8 0%,#3b82f6 40%,#F97316 60%,#F97316 100%);
+    "></div>
+  </div>
+
+  <p style="font-size:0.78rem;color:#64748b;margin-top:12px;">
+    ✦ Dimensión: 1584 × 396px · Exportar como PNG · Subir en la sección "Cover photo" de la página de empresa en LinkedIn
+  </p>
+</div>
+
+
+<!-- ══════════════ SECCIÓN 4: PUBLICACIONES INSTAGRAM ══════════════ -->
+<div class="section-wrap">
+  <div class="section-label">04 — Publicaciones Instagram · Posts de Lanzamiento</div>
+  <div class="posts-grid">
+
+    <!-- POST 1: Presentación (fondo oscuro) -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 1 · Lanzamiento oficial</div>
+      <div class="post-square" style="background:#0F172A;">
+        <!-- Grid bg -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.07;" viewBox="0 0 400 400">
+          <defs><pattern id="g1" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#60a5fa" stroke-width="0.6"/></pattern></defs>
+          <rect width="400" height="400" fill="url(#g1)"/>
+        </svg>
+        <!-- Glow -->
+        <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:999px;background:radial-gradient(circle,rgba(29,78,216,0.6) 0%,transparent 70%);"></div>
+        <div style="position:absolute;bottom:-20px;left:20px;width:150px;height:150px;border-radius:999px;background:radial-gradient(circle,rgba(249,115,22,0.3) 0%,transparent 70%);"></div>
+
+        <!-- Content -->
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px;">
+          <!-- Logo top -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+              <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(29,78,216,0.4)" stroke="#60a5fa" stroke-width="2.5"/>
+              <polygon points="24,11 36,18 36,30 24,37 12,30 12,18" fill="none" stroke="#F97316" stroke-width="2"/>
+              <circle cx="24" cy="24" r="6" fill="#3b82f6"/>
+              <line x1="24" y1="3" x2="24" y2="11" stroke="#60a5fa" stroke-width="2"/>
+              <line x1="24" y1="37" x2="24" y2="45" stroke="#60a5fa" stroke-width="2"/>
+              <line x1="6" y1="13" x2="12" y2="18" stroke="#60a5fa" stroke-width="2"/>
+              <line x1="36" y1="18" x2="42" y2="13" stroke="#60a5fa" stroke-width="2"/>
+              <line x1="6" y1="35" x2="12" y2="30" stroke="#60a5fa" stroke-width="2"/>
+              <line x1="36" y1="30" x2="42" y2="35" stroke="#60a5fa" stroke-width="2"/>
+            </svg>
+            <span style="font-family:var(--font);font-size:1.1rem;font-weight:800;color:white;letter-spacing:-0.02em;">Data<span style="color:#F97316;">Core</span></span>
+          </div>
+
+          <!-- Center -->
+          <div>
+            <div style="font-family:var(--font);font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:10px;">Bienvenidos a</div>
+            <div style="font-family:var(--font);font-size:2.4rem;font-weight:900;color:white;line-height:1.1;letter-spacing:-0.03em;">Data<span style="color:#F97316;">Core</span></div>
+            <div style="font-family:var(--font);font-size:0.85rem;color:#94a3b8;margin-top:8px;line-height:1.5;">Consultora de datos y automatización<br>para empresas paraguayas</div>
+          </div>
+
+          <!-- Pills bottom -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(29,78,216,0.3);border:1px solid rgba(96,165,250,0.4);border-radius:999px;padding:4px 10px;font-size:0.65rem;font-weight:600;color:#93c5fd;">📊 Datos</span>
+            <span style="background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.4);border-radius:999px;padding:4px 10px;font-size:0.65rem;font-weight:600;color:#fdba74;">⚡ Automatización</span>
+            <span style="background:rgba(22,163,74,0.2);border:1px solid rgba(34,197,94,0.4);border-radius:999px;padding:4px 10px;font-size:0.65rem;font-weight:600;color:#86efac;">📈 BI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 2: Pain point (fondo claro) -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 2 · Pain point</div>
+      <div class="post-square" style="background:#EFF6FF;">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px;">
+          <!-- Top tag -->
+          <div style="background:#1D4ED8;border-radius:999px;padding:5px 14px;width:fit-content;">
+            <span style="font-size:0.65rem;font-weight:700;color:white;letter-spacing:0.1em;text-transform:uppercase;">¿Te pasa esto?</span>
+          </div>
+
+          <!-- Main message -->
+          <div>
+            <div style="font-family:var(--font);font-size:1.55rem;font-weight:900;color:#0F172A;line-height:1.2;letter-spacing:-0.02em;">
+              Tu empresa crece<br>pero tus <span style="color:#1D4ED8;">reportes</span><br>siguen siendo<br><span style="color:#F97316;">manuales</span> 📋
+            </div>
+          </div>
+
+          <!-- Checklist -->
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;color:#1e293b;font-weight:500;">
+              <span style="color:#ef4444;font-size:0.9rem;">✗</span> Reportes en Excel al final del mes
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;color:#1e293b;font-weight:500;">
+              <span style="color:#ef4444;font-size:0.9rem;">✗</span> Datos que no coinciden entre sucursales
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;color:#1e293b;font-weight:500;">
+              <span style="color:#ef4444;font-size:0.9rem;">✗</span> Dependés de "la persona que sabe"
+            </div>
+            <div style="margin-top:6px;background:#1D4ED8;border-radius:10px;padding:10px 14px;font-size:0.72rem;font-weight:700;color:white;">
+              👋 Te ayudamos a resolverlo · datacore.com.py
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 3: Servicio destacado (POS) -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 3 · Servicio POS</div>
+      <div class="post-square" style="background:linear-gradient(145deg,#1e3a8a 0%,#0F172A 100%);">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.05;" viewBox="0 0 400 400">
+          <defs><pattern id="g3" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#fff" stroke-width="0.6"/></pattern></defs>
+          <rect width="400" height="400" fill="url(#g3)"/>
+        </svg>
+        <div style="position:absolute;top:-20px;left:-20px;width:180px;height:180px;border-radius:999px;background:radial-gradient(circle,rgba(249,115,22,0.35) 0%,transparent 70%);"></div>
+
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px;">
+          <!-- Badge -->
+          <div style="background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.5);border-radius:999px;padding:5px 14px;width:fit-content;">
+            <span style="font-size:0.65rem;font-weight:700;color:#fdba74;letter-spacing:0.1em;text-transform:uppercase;">Solución destacada</span>
+          </div>
+
+          <!-- Icon -->
+          <div style="text-align:center;font-size:3.5rem;line-height:1;">🛒</div>
+
+          <!-- Text -->
+          <div>
+            <div style="font-family:var(--font);font-size:1.4rem;font-weight:800;color:white;line-height:1.25;letter-spacing:-0.02em;margin-bottom:8px;">
+              Sistema Punto<br>de Venta (POS)
+            </div>
+            <div style="font-size:0.72rem;color:#94a3b8;line-height:1.55;">
+              Control de stock multi-sucursal · Facturación automática · Dashboard de ventas en tiempo real
+            </div>
+            <div style="margin-top:12px;display:flex;align-items:center;gap:6px;">
+              <div style="width:4px;height:4px;border-radius:999px;background:#F97316;"></div>
+              <span style="font-size:0.68rem;font-weight:600;color:#F97316;">datacore.com.py</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 4: Beneficio #1 (cifra impactante) -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 4 · Dato impactante</div>
+      <div class="post-square" style="background:#F97316;">
+        <div style="position:absolute;top:-30px;right:-30px;width:200px;height:200px;border-radius:999px;background:rgba(255,255,255,0.1);"></div>
+        <div style="position:absolute;bottom:-40px;left:-40px;width:220px;height:220px;border-radius:999px;background:rgba(0,0,0,0.08);"></div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px;">
+          <div style="font-family:var(--font);font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.8);">DataCore · Paraguay</div>
+          <div>
+            <div style="font-family:var(--font);font-size:4.5rem;font-weight:900;color:white;line-height:1;letter-spacing:-0.04em;">10h</div>
+            <div style="font-family:var(--font);font-size:1.1rem;font-weight:700;color:white;margin-top:4px;line-height:1.3;">semanales ahorradas<br>por persona</div>
+            <div style="font-family:var(--font);font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:10px;line-height:1.5;">Cuando automatizás tus reportes manuales con DataCore, tu equipo recupera tiempo para lo que realmente importa.</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;">
+            <span style="font-size:0.72rem;font-weight:700;color:white;">¿Cuánto tiempo pierde tu equipo? → Link en bio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 5: Servicio Dashboards -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 5 · Dashboards</div>
+      <div class="post-square" style="background:#F8FAFC;border:2px solid #e2e8f0;">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px;">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="background:#1D4ED8;border-radius:999px;padding:5px 12px;">
+              <span style="font-size:0.62rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:0.1em;">Dashboard</span>
+            </div>
+            <div style="font-size:0.7rem;font-weight:700;color:#64748b;font-family:var(--mono);">DataCore</div>
+          </div>
+
+          <!-- Mock dashboard -->
+          <div style="flex:1;margin:16px 0;display:flex;flex-direction:column;gap:8px;">
+            <!-- KPI row -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+              <div style="background:#EFF6FF;border-radius:8px;padding:8px 10px;text-align:center;">
+                <div style="font-size:1.1rem;font-weight:800;color:#1D4ED8;font-family:var(--mono);">↑23%</div>
+                <div style="font-size:0.55rem;color:#64748b;font-weight:600;">Ventas</div>
+              </div>
+              <div style="background:#F0FDF4;border-radius:8px;padding:8px 10px;text-align:center;">
+                <div style="font-size:1.1rem;font-weight:800;color:#16A34A;font-family:var(--mono);">↑15%</div>
+                <div style="font-size:0.55rem;color:#64748b;font-weight:600;">Margen</div>
+              </div>
+              <div style="background:#FFF7ED;border-radius:8px;padding:8px 10px;text-align:center;">
+                <div style="font-size:1.1rem;font-weight:800;color:#F97316;font-family:var(--mono);">↓8%</div>
+                <div style="font-size:0.55rem;color:#64748b;font-weight:600;">Costos</div>
+              </div>
+            </div>
+            <!-- Bar chart mock -->
+            <div style="background:white;border:1px solid #e2e8f0;border-radius:8px;padding:10px;flex:1;">
+              <div style="font-size:0.6rem;font-weight:600;color:#64748b;margin-bottom:8px;">Ventas por sucursal · Hoy</div>
+              <div style="display:flex;align-items:flex-end;gap:4px;height:44px;">
+                <div style="flex:1;background:#1D4ED8;border-radius:3px 3px 0 0;height:80%;"></div>
+                <div style="flex:1;background:#3b82f6;border-radius:3px 3px 0 0;height:60%;"></div>
+                <div style="flex:1;background:#93c5fd;border-radius:3px 3px 0 0;height:95%;"></div>
+                <div style="flex:1;background:#1D4ED8;border-radius:3px 3px 0 0;height:45%;"></div>
+                <div style="flex:1;background:#3b82f6;border-radius:3px 3px 0 0;height:70%;"></div>
+                <div style="flex:1;background:#F97316;border-radius:3px 3px 0 0;height:85%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div>
+            <div style="font-family:var(--font);font-size:1.1rem;font-weight:800;color:#0F172A;line-height:1.2;">Tu negocio, visible<br>en <span style="color:#1D4ED8;">tiempo real</span> 📊</div>
+            <div style="font-size:0.68rem;color:#64748b;margin-top:6px;">Dashboards a medida con tus datos reales. Sin Excel. Sin esperas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 6: CTA evaluación gratuita -->
+    <div class="post-wrapper">
+      <div class="card-label" style="padding:8px 0 8px 2px;">Post 6 · CTA evaluación gratuita</div>
+      <div class="post-square" style="background:linear-gradient(145deg,#1D4ED8 0%,#1e3a8a 100%);">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06;" viewBox="0 0 400 400">
+          <defs><pattern id="g6" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="12.5" cy="12.5" r="1" fill="white"/></pattern></defs>
+          <rect width="400" height="400" fill="url(#g6)"/>
+        </svg>
+        <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;border-radius:999px;background:radial-gradient(circle,rgba(249,115,22,0.4) 0%,transparent 70%);"></div>
+
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px;">
+          <div>
+            <div style="font-size:2.2rem;margin-bottom:12px;">🎯</div>
+            <div style="font-family:var(--font);font-size:1.55rem;font-weight:900;color:white;line-height:1.2;letter-spacing:-0.02em;">
+              Evaluá tu<br>situación<br><span style="color:#fdba74;">gratis</span>
+            </div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:10px;line-height:1.55;">
+              Analizamos tu operación sin costo y sin compromiso. Te decimos exactamente dónde están las ineficiencias en tus datos.
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:white;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.1rem;">📞</span>
+              <div>
+                <div style="font-size:0.65rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;">WhatsApp</div>
+                <div style="font-size:0.82rem;font-weight:700;color:#0F172A;font-family:var(--mono);">+595 971 850 259</div>
+              </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1rem;">✉️</span>
+              <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.85);font-family:var(--mono);">contacto@datacore.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════ SECCIÓN 5: POSTS LINKEDIN ══════════════ -->
+<div class="section-wrap">
+  <div class="section-label">05 — Publicaciones LinkedIn · 3 Posts de Lanzamiento</div>
+  <div style="display:flex;flex-direction:column;gap:20px;">
+
+    <!-- LI Post 1 -->
+    <div class="post-linkedin-card">
+      <div class="pl-header">
+        <div class="pl-avatar">DC</div>
+        <div>
+          <div class="pl-name">DataCore</div>
+          <div class="pl-meta">Consultoría en Datos · Asunción, Paraguay · Hace 1 minuto</div>
+        </div>
+      </div>
+      <div class="pl-body">🚀 <strong>Hoy lanzamos oficialmente DataCore.</strong>
+
+Somos una consultora de datos y automatización con base en Paraguay, y nuestro trabajo es simple: que tu empresa deje de depender de reportes manuales y empiece a tomar decisiones con información real y en tiempo real.
+
+¿Qué resolvemos?
+
+→ Empresas que siguen generando reportes en Excel al final del mes
+→ Equipos que dependen de "la persona que sabe" para entender los números
+→ Dueños que no pueden ver el rendimiento de sus sucursales en un solo lugar
+→ Gerentes que toman decisiones basadas en intuición porque los datos llegan tarde
+
+Hoy el desorden en los datos le cuesta dinero a tu empresa. Cada día que pasa sin visibilidad es un día que perdés oportunidades y tomás decisiones a ciegas.
+
+<strong>Lo que hacemos:</strong>
+📊 Dashboards de ventas, finanzas y operaciones en tiempo real
+⚡ Automatización de reportes manuales
+🛒 Sistemas POS con control multi-sucursal
+🔗 Integración de sistemas y datos
+📱 Desarrollo de aplicaciones a medida
+
+Si tu empresa está creciendo y sentís que perdiste el control de la información, escribinos. La evaluación inicial es sin costo y sin compromiso.
+
+📍 Asunción, Paraguay
+📧 contacto@datacore.com
+📞 +595 971 850 259</div>
+      <div class="pl-hashtags">#DataCore #DatosParaguay #AutomatizaciónParaguay #BusinessIntelligence #EmpresaParaguay #Dashboard #TransformaciónDigital</div>
+    </div>
+
+    <!-- LI Post 2 -->
+    <div class="post-linkedin-card">
+      <div class="pl-header">
+        <div class="pl-avatar">DC</div>
+        <div>
+          <div class="pl-name">DataCore</div>
+          <div class="pl-meta">Consultoría en Datos · Asunción, Paraguay · Hace 2 días</div>
+        </div>
+      </div>
+      <div class="pl-body">📋 <strong>El reporte que llega el 5 del mes ya no sirve.</strong>
+
+Cuando tu equipo comercial cierra el mes y recién al quinto día aparece el reporte de ventas, ya tomaste 5 días de decisiones a ciegas.
+
+Hablé con varios dueños y gerentes de empresas paraguayas en los últimos meses y el patrón se repite:
+
+❌ "Tenemos el reporte, pero siempre llega tarde"
+❌ "Hay una persona que lo arma en Excel, si falta ella, no hay nada"
+❌ "Los datos de una sucursal no coinciden con los de la otra"
+❌ "No sé cuáles son mis productos más rentables en este momento"
+
+La buena noticia: todos estos problemas tienen solución concreta, y no requieren meses de implementación.
+
+En DataCore automatizamos el proceso completo: los datos se extraen solos, se procesan y se entregan en un dashboard que cualquier persona puede leer, todos los días, sin intervención manual.
+
+<strong>Resultado:</strong> el equipo gerencial empieza el día sabiendo exactamente cómo está el negocio. Sin esperar al analista. Sin Excel. Sin sorpresas a fin de mes.
+
+¿Cuánto tiempo pierde tu equipo generando reportes manuales cada semana?
+
+👇 Contanos en comentarios o escribinos directo.</div>
+      <div class="pl-hashtags">#ReportesAutomáticos #DashboardParaguay #BusinessIntelligence #DataCore #AutomatizaciónParaguay #GerenciaDeNegocios</div>
+    </div>
+
+    <!-- LI Post 3 -->
+    <div class="post-linkedin-card">
+      <div class="pl-header">
+        <div class="pl-avatar">DC</div>
+        <div>
+          <div class="pl-name">DataCore</div>
+          <div class="pl-meta">Consultoría en Datos · Asunción, Paraguay · Hace 4 días</div>
+        </div>
+      </div>
+      <div class="pl-body">🛒 <strong>Caso: comercio con 3 sucursales, 0 visibilidad centralizada.</strong>
+
+Una empresa familiar con 3 locales de venta al público. Facturaban bien. Crecían. Pero nadie sabía en tiempo real cuánto vendió cada sucursal, qué productos tenían stock crítico, ni cuál local era el más rentable.
+
+Cada encargado usaba su propio Excel. Al final de la semana, alguien consolidaba todo en un archivo maestro. El proceso llevaba entre 4 y 6 horas cada lunes.
+
+<strong>Lo que implementamos:</strong>
+
+1️⃣ Sistema POS unificado para las 3 sucursales
+2️⃣ Dashboard central con datos en tiempo real de ventas, stock y caja
+3️⃣ Alertas automáticas de stock mínimo por sucursal
+4️⃣ Reporte diario automático enviado por email a dirección a las 8am
+
+<strong>Resultado:</strong>
+→ El proceso de 4-6 horas semanales desapareció completamente
+→ Dirección puede ver el estado de las 3 sucursales desde el celular
+→ Las decisiones de reposición de stock pasaron de reactivas a preventivas
+
+Este tipo de implementación no requiere meses. En DataCore trabajamos con tiempos de entrega ágiles y adaptados a la operación real de cada empresa.
+
+¿Tenés múltiples sucursales sin visibilidad centralizada? Escribinos.
+📧 contacto@datacore.com</div>
+      <div class="pl-hashtags">#CasoDeÉxito #SistemaPOS #ControlMultiSucursal #DataCore #DatosParaguay #AutomatizaciónParaguay</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ FOOTER DEL KIT ══════════════ -->
+<div style="max-width:1100px;margin:0 auto 40px;background:var(--navy);border-radius:16px;padding:32px 40px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+  <div>
+    <div style="font-family:var(--font);font-size:1.2rem;font-weight:800;color:white;margin-bottom:4px;">Data<span style="color:#F97316;">Core</span> · Branding Kit v1.0</div>
+    <div style="font-size:0.78rem;color:#475569;">contacto@datacore.com · +595 971 850 259 · Asunción, Paraguay</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span style="background:rgba(29,78,216,0.2);border:1px solid rgba(96,165,250,0.3);border-radius:999px;padding:5px 14px;font-size:0.72rem;font-weight:600;color:#93c5fd;">Abril 2026</span>
+    <span style="background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);border-radius:999px;padding:5px 14px;font-size:0.72rem;font-weight:600;color:#fdba74;">Uso interno y redes sociales</span>
+  </div>
+</div>
+
+</body>
+</html>
