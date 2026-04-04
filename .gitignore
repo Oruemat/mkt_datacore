@@ -35,3 +35,8 @@ next-env.d.ts
 
 # claude
 .claude/
+
+# external assets / reference repos
+/editor-pro-max-main/
+/branding_kit/
+/data/

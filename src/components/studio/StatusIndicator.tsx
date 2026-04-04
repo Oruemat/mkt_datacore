@@ -1,23 +1,21 @@
 "use client";
 
-interface StatusIndicatorProps {
-  status: "idle" | "running" | "completed" | "error";
-}
+type Status = "idle" | "running" | "completed" | "error";
 
-export function StatusIndicator({ status }: StatusIndicatorProps) {
-  const config = {
-    idle: { color: "bg-dc-muted", label: "Esperando", pulse: false },
-    running: { color: "bg-dc-electric", label: "Procesando", pulse: true },
-    completed: { color: "bg-green-500", label: "Completado", pulse: false },
-    error: { color: "bg-red-500", label: "Error", pulse: false },
-  };
+const STATUS_CONFIG: Record<Status, { label: string; dot: string; text: string }> = {
+  idle: { label: "Listo", dot: "bg-dc-gray-400", text: "text-dc-gray-500" },
+  running: { label: "Generando...", dot: "bg-dc-blue-600 animate-pulse", text: "text-dc-blue-600" },
+  completed: { label: "Completado", dot: "bg-dc-green-600", text: "text-dc-green-600" },
+  error: { label: "Error", dot: "bg-red-500", text: "text-red-500" },
+};
 
-  const { color, label, pulse } = config[status];
+export function StatusIndicator({ status }: { status: Status }) {
+  const config = STATUS_CONFIG[status];
 
   return (
     <div className="flex items-center gap-2">
-      <div className={`w-2.5 h-2.5 rounded-full ${color} ${pulse ? "animate-pulse" : ""}`} />
-      <span className="text-sm text-dc-muted">{label}</span>
+      <div className={`w-2 h-2 rounded-full ${config.dot}`} />
+      <span className={`text-xs font-medium ${config.text}`}>{config.label}</span>
     </div>
   );
 }

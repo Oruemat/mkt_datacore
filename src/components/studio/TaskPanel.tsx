@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { SkillName, Platform, ContentPillar } from "@/lib/agent/types";
 
+type ContentFormat = "post" | "carousel" | "reel" | "calendar" | "email" | "lead" | "report";
+
 interface TaskPanelProps {
   onSubmit: (task: {
     type: SkillName;
@@ -14,165 +16,194 @@ interface TaskPanelProps {
   isRunning: boolean;
 }
 
-const SKILLS: { value: SkillName; label: string; needsPlatform: boolean; needsPillar: boolean }[] = [
-  { value: "post_writer_instagram", label: "Post Instagram", needsPlatform: false, needsPillar: true },
-  { value: "post_writer_linkedin", label: "Post LinkedIn", needsPlatform: false, needsPillar: true },
-  { value: "carrusel_writer", label: "Carrusel", needsPlatform: true, needsPillar: false },
-  { value: "reels_script", label: "Guion de Reel", needsPlatform: false, needsPillar: false },
-  { value: "lead_classifier", label: "Clasificar Lead", needsPlatform: false, needsPillar: false },
-  { value: "email_sequence_writer", label: "Secuencia Emails", needsPlatform: false, needsPillar: false },
-  { value: "calendar_planner", label: "Calendario Semanal", needsPlatform: false, needsPillar: false },
-  { value: "weekly_performance_reporter", label: "Reporte Semanal", needsPlatform: false, needsPillar: false },
+const FORMATS: { value: ContentFormat; label: string; icon: string }[] = [
+  { value: "post", label: "Post", icon: "img" },
+  { value: "carousel", label: "Carrusel", icon: "slides" },
+  { value: "reel", label: "Reel", icon: "video" },
+  { value: "calendar", label: "Calendario", icon: "cal" },
+  { value: "email", label: "Emails", icon: "mail" },
+  { value: "lead", label: "Lead", icon: "user" },
+  { value: "report", label: "Reporte", icon: "chart" },
 ];
 
-const PILLARS: { value: ContentPillar; label: string }[] = [
-  { value: "educativo", label: "Educativo" },
-  { value: "caso_de_uso", label: "Caso de uso" },
-  { value: "behind_scenes", label: "Behind scenes" },
-  { value: "tendencias", label: "Tendencias" },
-  { value: "comercial", label: "Comercial" },
-];
+function resolveSkill(format: ContentFormat, platform: Platform): SkillName {
+  switch (format) {
+    case "post":
+      return platform === "linkedin" ? "post_writer_linkedin" : "post_writer_instagram";
+    case "carousel":
+      return "carrusel_writer";
+    case "reel":
+      return "reels_script";
+    case "calendar":
+      return "calendar_planner";
+    case "email":
+      return "email_sequence_writer";
+    case "lead":
+      return "lead_classifier";
+    case "report":
+      return "weekly_performance_reporter";
+  }
+}
+
+const FORMAT_PLACEHOLDER: Record<ContentFormat, string> = {
+  post: "Ej: Como los dashboards reducen tiempo de decision en retail",
+  carousel: "Ej: 5 errores comunes al implementar un CRM",
+  reel: "Ej: Antes vs despues de automatizar reportes",
+  calendar: "Ej: Semana de lanzamiento del servicio POS",
+  email: "Ej: Secuencia para leads que pidieron demo",
+  lead: "Nombre: Juan, Empresa: Retail SA, Mensaje: Quiero automatizar reportes...",
+  report: "Ej: Resumen de la semana del 1 al 7 de abril",
+};
 
 export function TaskPanel({ onSubmit, isRunning }: TaskPanelProps) {
-  const [selectedSkill, setSelectedSkill] = useState<SkillName>("post_writer_instagram");
   const [topic, setTopic] = useState("");
+  const [format, setFormat] = useState<ContentFormat>("post");
   const [platform, setPlatform] = useState<Platform>("instagram");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [pillar, setPillar] = useState<ContentPillar>("educativo");
   const [extraContext, setExtraContext] = useState("");
 
-  const skillConfig = SKILLS.find((s) => s.value === selectedSkill);
+  const needsPlatform = format === "post" || format === "carousel";
+  const needsPillar = format === "post";
 
   function handleSubmit() {
     if (!topic.trim()) return;
     onSubmit({
-      type: selectedSkill,
+      type: resolveSkill(format, platform),
       topic: topic.trim(),
-      platform: skillConfig?.needsPlatform ? platform : getPlatformFromSkill(selectedSkill),
-      pillar: skillConfig?.needsPillar ? pillar : undefined,
+      platform: needsPlatform ? platform : undefined,
+      pillar: needsPillar ? pillar : undefined,
       extraContext: extraContext.trim() || undefined,
     });
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" && e.ctrlKey && topic.trim() && !isRunning) {
+      handleSubmit();
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-dc-muted/20">
-        <h2 className="text-sm font-semibold text-white">Nueva Tarea</h2>
+      <div className="px-5 py-4 border-b border-dc-gray-200">
+        <h2 className="text-sm font-display font-semibold text-dc-gray-900">Generar Contenido</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Skill selector */}
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        {/* Format — compact pills */}
         <div>
-          <label className="block text-xs text-dc-muted mb-1.5">Tipo de contenido</label>
-          <div className="grid grid-cols-2 gap-1.5">
-            {SKILLS.map((skill) => (
+          <label className="block text-[11px] font-semibold text-dc-gray-400 uppercase tracking-wider mb-2">Formato</label>
+          <div className="flex flex-wrap gap-1.5">
+            {FORMATS.map((f) => (
               <button
-                key={skill.value}
-                onClick={() => setSelectedSkill(skill.value)}
-                className={`text-xs px-2 py-2 rounded-lg border transition-colors text-left ${
-                  selectedSkill === skill.value
-                    ? "border-dc-electric bg-dc-electric/10 text-white"
-                    : "border-dc-muted/20 text-dc-muted hover:border-dc-muted/40"
+                key={f.value}
+                onClick={() => setFormat(f.value)}
+                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
+                  format === f.value
+                    ? "bg-dc-blue-600 text-white shadow-sm"
+                    : "bg-dc-gray-100 text-dc-gray-600 hover:bg-dc-gray-200"
                 }`}
               >
-                {skill.label}
+                {f.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Topic */}
+        {/* Platform — only when needed */}
+        {needsPlatform && (
+          <div className="flex gap-2">
+            {(["instagram", "linkedin"] as Platform[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPlatform(p)}
+                className={`flex-1 text-xs py-2 rounded-xl border transition-all capitalize font-medium ${
+                  platform === p
+                    ? "border-dc-blue-600 bg-dc-blue-50 text-dc-blue-600"
+                    : "border-dc-gray-200 text-dc-gray-500 hover:border-dc-gray-300"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Topic — the main input */}
         <div>
-          <label className="block text-xs text-dc-muted mb-1.5">
-            {selectedSkill === "lead_classifier" ? "Datos del lead" : "Tema / Descripcion"}
+          <label className="block text-[11px] font-semibold text-dc-gray-400 uppercase tracking-wider mb-1.5">
+            {format === "lead" ? "Datos del lead" : "Sobre que?"}
           </label>
           <textarea
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            rows={3}
-            placeholder={
-              selectedSkill === "lead_classifier"
-                ? "Nombre: Juan, Empresa: Retail SA, Mensaje: Quiero automatizar reportes..."
-                : selectedSkill === "calendar_planner"
-                ? "Fecha inicio: 2026-04-06, Tema: lanzamiento de servicio POS"
-                : "Ej: Como los dashboards reducen tiempo de decision en retail"
-            }
-            className="w-full bg-dc-navy/50 border border-dc-muted/20 rounded-lg px-3 py-2 text-sm text-white placeholder:text-dc-muted/50 focus:border-dc-electric focus:outline-none resize-none"
+            onKeyDown={handleKeyDown}
+            rows={4}
+            placeholder={FORMAT_PLACEHOLDER[format]}
+            className="w-full bg-white border border-dc-gray-200 rounded-xl px-3 py-2.5 text-sm text-dc-gray-900 placeholder:text-dc-gray-400 focus:border-dc-blue-600 focus:ring-1 focus:ring-dc-blue-600/20 focus:outline-none resize-none"
+            autoFocus
           />
+          <p className="text-[10px] text-dc-gray-400 mt-1">Ctrl+Enter para generar</p>
         </div>
 
-        {/* Platform selector */}
-        {skillConfig?.needsPlatform && (
-          <div>
-            <label className="block text-xs text-dc-muted mb-1.5">Plataforma</label>
-            <div className="flex gap-2">
-              {(["instagram", "linkedin"] as Platform[]).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPlatform(p)}
-                  className={`flex-1 text-xs px-3 py-2 rounded-lg border transition-colors capitalize ${
-                    platform === p
-                      ? "border-dc-electric bg-dc-electric/10 text-white"
-                      : "border-dc-muted/20 text-dc-muted hover:border-dc-muted/40"
-                  }`}
+        {/* Advanced toggle */}
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="text-[11px] text-dc-gray-400 hover:text-dc-gray-600 transition flex items-center gap-1"
+        >
+          <svg className={`w-3 h-3 transition-transform ${showAdvanced ? "rotate-90" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          Opciones avanzadas
+        </button>
+
+        {showAdvanced && (
+          <div className="space-y-3 pl-2 border-l-2 border-dc-gray-100">
+            {needsPillar && (
+              <div>
+                <label className="block text-[11px] font-medium text-dc-gray-500 mb-1">Pilar</label>
+                <select
+                  value={pillar}
+                  onChange={(e) => setPillar(e.target.value as ContentPillar)}
+                  className="w-full bg-white border border-dc-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-dc-gray-700 focus:border-dc-blue-600 focus:outline-none"
                 >
-                  {p}
-                </button>
-              ))}
+                  <option value="educativo">Educativo</option>
+                  <option value="caso_de_uso">Caso de uso</option>
+                  <option value="behind_scenes">Behind scenes</option>
+                  <option value="tendencias">Tendencias</option>
+                  <option value="comercial">Comercial</option>
+                </select>
+              </div>
+            )}
+            <div>
+              <label className="block text-[11px] font-medium text-dc-gray-500 mb-1">Contexto extra</label>
+              <input
+                type="text"
+                value={extraContext}
+                onChange={(e) => setExtraContext(e.target.value)}
+                placeholder="Ej: sector salud, semana de lanzamiento..."
+                className="w-full bg-white border border-dc-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-dc-gray-700 placeholder:text-dc-gray-400 focus:border-dc-blue-600 focus:outline-none"
+              />
             </div>
           </div>
         )}
-
-        {/* Pillar selector */}
-        {skillConfig?.needsPillar && (
-          <div>
-            <label className="block text-xs text-dc-muted mb-1.5">Pilar de contenido</label>
-            <div className="flex flex-wrap gap-1.5">
-              {PILLARS.map((p) => (
-                <button
-                  key={p.value}
-                  onClick={() => setPillar(p.value)}
-                  className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
-                    pillar === p.value
-                      ? "border-dc-electric bg-dc-electric/10 text-white"
-                      : "border-dc-muted/20 text-dc-muted hover:border-dc-muted/40"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Extra context */}
-        <div>
-          <label className="block text-xs text-dc-muted mb-1.5">Contexto adicional (opcional)</label>
-          <input
-            type="text"
-            value={extraContext}
-            onChange={(e) => setExtraContext(e.target.value)}
-            placeholder="Ej: enfocado en sector salud, para la semana del lanzamiento..."
-            className="w-full bg-dc-navy/50 border border-dc-muted/20 rounded-lg px-3 py-2 text-sm text-white placeholder:text-dc-muted/50 focus:border-dc-electric focus:outline-none"
-          />
-        </div>
       </div>
 
       {/* Submit */}
-      <div className="p-4 border-t border-dc-muted/20">
+      <div className="p-5 border-t border-dc-gray-200">
         <button
           onClick={handleSubmit}
           disabled={!topic.trim() || isRunning}
-          className="w-full py-2.5 bg-dc-electric text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-gradient-to-r from-dc-blue-600 to-dc-blue-700 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-dc-blue-600/25 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none"
         >
-          {isRunning ? "Procesando..." : "Ejecutar Agente"}
+          {isRunning ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              Generando...
+            </span>
+          ) : "Generar"}
         </button>
       </div>
     </div>
   );
-}
-
-function getPlatformFromSkill(skill: SkillName): Platform | undefined {
-  if (skill === "post_writer_instagram") return "instagram";
-  if (skill === "post_writer_linkedin") return "linkedin";
-  return undefined;
 }
