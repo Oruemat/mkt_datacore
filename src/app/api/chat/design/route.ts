@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest } from "next/server";
 import { DESIGN_SYSTEM_PROMPT, buildDesignContext } from "@/lib/agent/design-prompt";
 import { loadDesignFeedback, saveDesignFeedback, formatFeedbackForPrompt } from "@/lib/agent/design-context";
+import { analyzeDesignPatterns } from "@/lib/agent/design-changes";
 
 export const maxDuration = 60;
 
@@ -41,13 +42,28 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Load accumulated design feedback
+  // Load accumulated design feedback + patterns
   const feedback = await loadDesignFeedback();
   const feedbackContext = formatFeedbackForPrompt(feedback);
 
-  // Build full system prompt with current state + feedback
+  let patternsContext = "";
+  try {
+    const patterns = await analyzeDesignPatterns();
+    if (patterns.totalChanges > 5) {
+      const parts: string[] = [`\n\n## PATRONES DE DISEÑO (${patterns.totalChanges} cambios registrados)`];
+      if (patterns.topStyleChanges.length > 0) {
+        parts.push(`Estilos mas cambiados: ${patterns.topStyleChanges.slice(0, 5).map((s) => `${s.property} (${s.count}x${s.avgValue ? `, avg=${s.avgValue}` : ""})`).join(", ")}`);
+      }
+      if (patterns.topPropChanges.length > 0) {
+        parts.push(`Props mas cambiados: ${patterns.topPropChanges.slice(0, 5).map((p) => `${p.property} (${p.count}x)`).join(", ")}`);
+      }
+      patternsContext = parts.join("\n");
+    }
+  } catch { /* non-blocking */ }
+
+  // Build full system prompt with current state + feedback + patterns
   const stateContext = buildDesignContext(visualState);
-  const systemPrompt = `${DESIGN_SYSTEM_PROMPT}${feedbackContext}\n\n## ESTADO ACTUAL\n${stateContext}`;
+  const systemPrompt = `${DESIGN_SYSTEM_PROMPT}${feedbackContext}${patternsContext}\n\n## ESTADO ACTUAL\n${stateContext}`;
 
   // Convert messages to Anthropic format
   const anthropicMessages: Anthropic.MessageParam[] = messages.map((m) => ({

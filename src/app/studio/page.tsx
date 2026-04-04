@@ -24,6 +24,7 @@ import { LeadPreview } from "@/components/studio/LeadPreview";
 import { ReportPreview } from "@/components/studio/ReportPreview";
 import { VisualEditor } from "@/components/studio/VisualEditor";
 import { StudioChat } from "@/components/studio/StudioChat";
+import { CodePreview } from "@/components/studio/CodePreview";
 import { IdlePlaceholder, SkeletonPreview } from "@/components/studio/LoadingStates";
 
 const RemotionPreview = dynamic(
@@ -39,6 +40,26 @@ const RemotionPreview = dynamic(
 );
 
 type AgentStatus = "idle" | "running" | "completed" | "error";
+
+// Session ID for tracking design changes across a generation session
+const sessionId = typeof crypto !== "undefined" && crypto.randomUUID
+  ? crypto.randomUUID()
+  : `s-${Date.now()}`;
+
+function logDesignChange(params: {
+  source: "chat" | "editor";
+  action: string;
+  contentType: string;
+  template: string | null;
+  changes: Record<string, unknown>;
+  before?: Record<string, unknown> | null;
+}) {
+  fetch("/api/design-changes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, ...params }),
+  }).catch(() => { /* non-blocking */ });
+}
 
 interface TaskInput {
   type: SkillName;
@@ -173,6 +194,9 @@ export default function StudioPage() {
 
   // Design chat
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // Track if editor has unapplied changes (edits made after last render)
+  const [hasUnappliedEdits, setHasUnappliedEdits] = useState(false);
 
   // Auto-render: ready-to-download URLs
   const [readyPngUrl, setReadyPngUrl] = useState<string | null>(null);
@@ -517,6 +541,72 @@ export default function StudioPage() {
     }
   }
 
+  // Re-render with current editor/chat changes without regenerating content
+  async function handleApplyEdits() {
+    if (!hasRemotionPreview) return;
+
+    // Revoke old URLs
+    if (readyPngUrl) URL.revokeObjectURL(readyPngUrl);
+    if (readyMp4Url) URL.revokeObjectURL(readyMp4Url);
+    setReadyPngUrl(null);
+    setReadyMp4Url(null);
+    setHasUnappliedEdits(false);
+
+    let compositionId = "";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let inputProps: any = {};
+    let width = 1080;
+    let height = 1080;
+    let durationInFrames = 90;
+
+    if (contentType === "post" && remotionPostProps) {
+      compositionId = "DCPostVisual";
+      inputProps = { ...remotionPostProps };
+    } else if (contentType === "carousel" && remotionCarouselProps) {
+      compositionId = "DCCarousel";
+      inputProps = { ...remotionCarouselProps };
+      durationInFrames = remotionCarouselProps.slides.length * 90;
+    } else if (contentType === "reel" && remotionReelProps) {
+      compositionId = "DCReel";
+      inputProps = { ...remotionReelProps };
+      width = 1080;
+      height = 1920;
+      durationInFrames = (remotionReelProps.durationSeconds || 35) * 30;
+    } else {
+      return;
+    }
+
+    // Render PNG
+    setRenderStatus("rendering_png");
+    try {
+      const pngRes = await fetch("/api/render/still", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ compositionId, inputProps, frame: 45, width, height }),
+      });
+      if (pngRes.ok) {
+        const blob = await pngRes.blob();
+        setReadyPngUrl(URL.createObjectURL(blob));
+      }
+    } catch { /* non-blocking */ }
+
+    // Render MP4
+    setRenderStatus("rendering_mp4");
+    try {
+      const mp4Res = await fetch("/api/render/video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ compositionId, inputProps, width, height, fps: 30, durationInFrames }),
+      });
+      if (mp4Res.ok) {
+        const blob = await mp4Res.blob();
+        setReadyMp4Url(URL.createObjectURL(blob));
+      }
+    } catch { /* non-blocking */ }
+
+    setRenderStatus("done");
+  }
+
   // ── Computed ────────────────────────────────────────────
 
   const hasContent =
@@ -572,7 +662,18 @@ export default function StudioPage() {
         }));
       }
     }
-  }, []);
+    setHasUnappliedEdits(true);
+    // Log each chat command as a design change
+    for (const cmd of commands) {
+      logDesignChange({
+        source: "chat",
+        action: cmd.action,
+        contentType,
+        template: (cmd.props?.template as string) || remotionPostProps?.template || null,
+        changes: (cmd.action === "updateStyles" ? cmd.styles : cmd.props) as Record<string, unknown> || {},
+      });
+    }
+  }, [contentType, remotionPostProps?.template]);
 
   // ── Auto-Render Effect ──────────────────────────────────
   // When agent finishes and we have a visual preview, auto-render PNG + MP4
@@ -580,6 +681,7 @@ export default function StudioPage() {
   useEffect(() => {
     if (status !== "completed" || !hasRemotionPreview || autoRenderTriggered.current) return;
     autoRenderTriggered.current = true;
+    setHasUnappliedEdits(false);
 
     // Determine composition details
     let compositionId = "";
@@ -704,9 +806,32 @@ export default function StudioPage() {
       postProps={remotionPostProps}
       carouselProps={remotionCarouselProps}
       reelProps={remotionReelProps}
-      onUpdatePostProps={(updates) => setPostPropsOverrides((prev) => ({ ...prev, ...updates }))}
-      onUpdateCarouselProps={(updates) => setCarouselPropsOverrides((prev) => ({ ...prev, ...updates }))}
-      onUpdateReelProps={(updates) => setReelPropsOverrides((prev) => ({ ...prev, ...updates }))}
+      onUpdatePostProps={(updates) => {
+        setPostPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: remotionPostProps?.template || null, changes: updates });
+      }}
+      onUpdateCarouselProps={(updates) => {
+        setCarouselPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: null, changes: updates as Record<string, unknown> });
+      }}
+      onUpdateReelProps={(updates) => {
+        setReelPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: null, changes: updates as Record<string, unknown> });
+      }}
+    />
+  ) : undefined;
+
+  // ── Code Tab Content ────────────────────────────────────
+
+  const codeTabContent = hasRemotionPreview ? (
+    <CodePreview
+      contentType={contentType}
+      postProps={remotionPostProps}
+      carouselProps={remotionCarouselProps}
+      reelProps={remotionReelProps}
     />
   ) : undefined;
 
@@ -775,6 +900,7 @@ export default function StudioPage() {
           <ContentPanel
             copyTab={copyTabContent}
             editorTab={editorTabContent}
+            codeTab={codeTabContent}
             detailsTab={detailsTabContent}
             hasContent={hasContent}
           />
@@ -791,9 +917,11 @@ export default function StudioPage() {
         renderStatus={renderStatus}
         readyPngUrl={readyPngUrl}
         readyMp4Url={readyMp4Url}
+        hasUnappliedEdits={hasUnappliedEdits}
         onCopyText={handleCopyText}
         onDownloadImage={handleDownloadImage}
         onDownloadVideo={handleDownloadVideo}
+        onApplyEdits={handleApplyEdits}
         onApprove={handleApprove}
         onReject={handleReject}
       />

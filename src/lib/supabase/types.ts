@@ -63,6 +63,21 @@ export interface Database {
         Insert: Omit<Database["public"]["Tables"]["agent_tasks"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["agent_tasks"]["Row"]>;
       };
+      design_changes: {
+        Row: {
+          id: string;
+          session_id: string;
+          source: "chat" | "editor" | "auto";
+          action: string;
+          content_type: string;
+          template: string | null;
+          changes_json: string;
+          before_json: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["design_changes"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["design_changes"]["Row"]>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

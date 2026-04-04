@@ -12,6 +12,7 @@ interface Tab {
 interface ContentPanelProps {
   copyTab: React.ReactNode;
   editorTab?: React.ReactNode;
+  codeTab?: React.ReactNode;
   detailsTab?: React.ReactNode;
   hasContent: boolean;
 }
@@ -19,16 +20,18 @@ interface ContentPanelProps {
 const TABS: Tab[] = [
   { id: "copy", label: "Contenido" },
   { id: "editor", label: "Editor" },
+  { id: "code", label: "Codigo" },
   { id: "details", label: "Detalles" },
 ];
 
-export function ContentPanel({ copyTab, editorTab, detailsTab, hasContent }: ContentPanelProps) {
+export function ContentPanel({ copyTab, editorTab, codeTab, detailsTab, hasContent }: ContentPanelProps) {
   const [activeTab, setActiveTab] = useState("copy");
 
   if (!hasContent) return null;
 
   const availableTabs = TABS.filter((tab) => {
     if (tab.id === "editor" && !editorTab) return false;
+    if (tab.id === "code" && !codeTab) return false;
     if (tab.id === "details" && !detailsTab) return false;
     return true;
   });
@@ -58,6 +61,7 @@ export function ContentPanel({ copyTab, editorTab, detailsTab, hasContent }: Con
       <div>
         {activeTab === "copy" && copyTab}
         {activeTab === "editor" && editorTab}
+        {activeTab === "code" && codeTab}
         {activeTab === "details" && detailsTab}
       </div>
     </div>
