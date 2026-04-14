@@ -85,15 +85,15 @@ IDENTIDAD VISUAL DATACORE (alineada con landing-datacore.vercel.app):
 - TEMA: CLARO — fondos blancos y claros, NO oscuros
 - Fondo principal: blanco #FFFFFF o gris-50 #F9FAFB
 - Gradiente hero: from-blue-50 (#EFF6FF) via-white (#FFFFFF) to-orange-50 (#FFF7ED)
-- Color primario: Blue-600 #2563EB (CTAs, botones, links, acentos)
+- Color primario: Blue-600 #2563EB / Blue-700 #1D4ED8 (CTAs, botones, acentos)
 - Acento calido: Orange-500 #F97316 (highlights, max 20% — un solo detalle por pieza)
 - Exito/Resultados: Green-600 #16A34A (datos positivos, crecimiento)
 - Texto titulos: Gray-900 #111827 (oscuro sobre fondo claro)
 - Texto cuerpo: Gray-600 #4B5563
-- Tipografia: Inter para cuerpo, Poppins para titulos, JetBrains Mono para datos/metricas
-- Cards: fondo blanco, border gray-200 (#E5E7EB), rounded-2xl (16px), shadow-lg
-- Badges: rounded-full con fondo de color suave (blue-100, orange-100, green-100)
-- Botones CTA: gradiente blue-600 a blue-700, rounded-xl, sombra azul suave
+- Tipografia: Inter para heading/body, JetBrains Mono para numeros/datos, Poppins para display
+- Cards: fondo blanco, border #E5E7EB, rounded 16px, shadow suave
+- Badges: rounded-full, estilo "soft" (fondo claro, texto oscuro) para fondos claros
+- Botones CTA: Blue-700 #1D4ED8, rounded-xl
 - Estilo: profesional, limpio, moderno, mucho espacio en blanco, sombras suaves
 - NO usar fondos oscuros/navy, NO saturacion excesiva, NO estilos caricaturescos
 
@@ -103,14 +103,6 @@ TONO DE COMUNICACION:
 - Slogan: "Deja de decidir por intuicion"
 - Mision: "Transformamos datos en decisiones inteligentes"
 - CTA principal: "Evalua tu situacion gratis"
-
-TEMPLATES DISPONIBLES PARA IMAGENES:
-- "hero": gradiente hero claro (blue-50→white→orange-50), texto grande bold gray-900, badge DataCorePY, circulos decorativos difuminados. MEJOR PARA: hooks, afirmaciones, preguntas provocativas.
-- "metric": card blanca con gauge ring SVG, numero grande JetBrains Mono, fondo gris-50. MEJOR PARA: estadisticas, porcentajes, numeros impactantes.
-- "comparison": cards lado a lado — ANTES con borde rojo y ❌, AHORA con borde verde y ✅, fondo hero gradient. MEJOR PARA: transformaciones, antes/despues.
-- "tips": cards blancas numeradas con borde lateral de color, sobre gradiente hero. MEJOR PARA: listas, consejos, pasos, checklist.
-- "dashboard": grid de cards KPI blancas con sparklines, fondo gris-50. MEJOR PARA: reportes, resultados, metricas multiples.
-- "statement": texto centrado grande sobre gradiente hero, comilla decorativa gigante. MEJOR PARA: frases poderosas, reflexiones, citas.
 `;
 
 // ── Tool Handlers ───────────────────────────────────────────
@@ -121,63 +113,86 @@ function handlePostWriterInstagram(input: Record<string, unknown>): unknown {
 
 ${DESIGN_CONTEXT}
 
-IMPORTANTE — SELECCION DE TEMPLATE:
-NO uses "hero" a menos que sea un hook o pregunta provocativa SIN datos.
-Analiza el contenido y selecciona el template que MEJOR lo represente visualmente:
-- Si el copy tiene datos numericos, estadisticas o un KPI central → usa "metric"
-- Si el copy compara un antes y despues, o muestra un problema vs solucion → usa "comparison"
-- Si el copy tiene una lista de pasos, consejos o beneficios → usa "tips"
-- Si el copy menciona multiples metricas, KPIs o resultados → usa "dashboard"
-- Si el copy es una frase reflexiva o cita poderosa → usa "statement"
-- SOLO si ninguno de los anteriores aplica → usa "hero"
+## SISTEMA DE COMPOSICION VISUAL
+
+En vez de elegir un template rigido, compone la imagen del post usando BLOQUES VISUALES. Genera un JSON "composition" que describe exactamente que elementos mostrar.
+
+### Estructura de composicion:
+{
+  "background": { "type": "solid"|"gradient", "color": "#EFF6FF", "colors": [...], "angle": 135 },
+  "layout": "vertical-start"|"vertical-center"|"vertical-spread",
+  "padding": { "horizontal": 60, "vertical": 60 },
+  "gap": 20,
+  "elements": [ ... bloques visuales ordenados ... ]
+}
+
+### Bloques disponibles:
+
+- **badge**: Pill/etiqueta. { "type": "badge", "text": "TEXTO", "color": "blue"|"orange"|"green", "style": "soft", "animation": { "enter": "fade" } }
+- **richText**: Texto con colores inline. { "type": "richText", "segments": [{ "text": "normal ", "fontWeight": 900 }, { "text": "resaltado", "color": "#1D4ED8", "fontWeight": 900 }], "fontSize": 42, "lineHeight": 1.2, "textAlign": "left", "animation": { "enter": "slideUp", "delay": 5 } }
+- **checklist**: Lista con iconos. { "type": "checklist", "items": [{ "text": "Item", "icon": "cross"|"check"|"bullet", "iconColor": "#9CA3AF" }], "gap": 14, "animation": { "enter": "slideUp", "delay": 12 } }
+- **metric**: Numero grande. { "type": "metric", "value": "85%", "label": "Mejora promedio", "showGauge": true, "animation": { "enter": "scale" } }
+- **ctaBar**: Barra CTA. { "type": "ctaBar", "text": "Te ayudamos · datacore.com.py", "bgColor": "#1D4ED8", "textColor": "#FFFFFF", "fullWidth": true }
+- **card**: Contenedor con hijos. { "type": "card", "shadow": "sm", "padding": 20, "accentBorder": { "side": "left", "color": "#2563EB", "width": 4 }, "children": [ ...elementos... ] }
+- **spacer**: Espacio. { "type": "spacer", "height": 24 } o { "type": "spacer", "flexGrow": 1 } (para empujar CTA al fondo)
+- **logo**: Logo DataCore. { "type": "logo", "variant": "full", "position": "bottom" }
+- **quote**: Cita decorativa. { "type": "quote", "text": "...", "fontSize": 38, "decorativeMarks": true }
+- **comparison**: Antes/Despues. { "type": "comparison", "before": { "label": "ANTES", "items": ["..."] }, "after": { "label": "AHORA", "items": ["..."] } }
+- **divider**: Linea. { "type": "divider", "style": "gradient", "colors": ["#2563EB", "#F97316"], "height": 4 }
+- **sparkline**: Mini grafico. { "type": "sparkline", "data": [20, 35, 45, 70], "color": "#2563EB" }
+- **icon**: Emoji decorativo con fondo. { "type": "icon", "emoji": "📊", "size": 48, "bgColor": "rgba(37,99,235,0.12)", "bgRadius": 12 }
+- **image**: Imagen externa. { "type": "image", "src": "/brand/logo.png", "width": 200, "borderRadius": 12 }
+
+### Reglas de composicion:
+1. SIEMPRE incluir logo con position "bottom"
+2. Para posts con CTA abajo: usar layout "vertical-start" + spacer flexGrow:1 antes del CTA
+3. Badge style "soft" para fondos claros
+4. Iconos de dolor en checklist: gris sutil #9CA3AF, no rojo
+5. Maximo 3 colores de acento
+6. richText SIEMPRE con multiples segmentos de color — NUNCA todo en un color
+7. Animacion: badge primero (delay 0), titulo (delay 5), contenido (delay 10-15), CTA (delay 20)
+
+### Ejemplo — Pain Point:
+{
+  "composition": {
+    "background": { "type": "solid", "color": "#EFF6FF" },
+    "layout": "vertical-start",
+    "padding": { "horizontal": 60, "vertical": 60 },
+    "gap": 20,
+    "elements": [
+      { "type": "badge", "text": "¿TE PASA ESTO?", "color": "blue", "style": "soft", "animation": { "enter": "fade", "delay": 0 } },
+      { "type": "richText", "segments": [
+        { "text": "Tu empresa crece\\npero tus ", "fontWeight": 900 },
+        { "text": "reportes", "color": "#1D4ED8", "fontWeight": 900 },
+        { "text": " siguen siendo\\n", "fontWeight": 900 },
+        { "text": "manuales", "color": "#F97316", "fontWeight": 900 }
+      ], "fontSize": 42, "lineHeight": 1.2, "textAlign": "left", "animation": { "enter": "slideUp", "delay": 5 } },
+      { "type": "checklist", "items": [
+        { "text": "Reportes en Excel al final del mes", "icon": "cross", "iconColor": "#9CA3AF" },
+        { "text": "Datos que no coinciden entre sucursales", "icon": "cross", "iconColor": "#9CA3AF" }
+      ], "gap": 14, "animation": { "enter": "slideUp", "delay": 12 } },
+      { "type": "spacer", "flexGrow": 1 },
+      { "type": "ctaBar", "text": "👋 Te ayudamos a resolverlo · datacore.com.py", "bgColor": "#1D4ED8", "textColor": "#FFFFFF", "fullWidth": true, "animation": { "enter": "fade", "delay": 20 } },
+      { "type": "logo", "variant": "full", "position": "bottom" }
+    ]
+  }
+}
 
 Responde con JSON:
 {
   "copy": "texto del post listo para publicar",
   "hashtags": ["#hashtag1", "#hashtag2", ...],
   "variantB": "version alternativa del copy con hook diferente",
-  "brandNote": "nota si algo se aleja del tono",
-
-  "imageTemplate": "metric|comparison|tips|dashboard|statement|hero",
-  "imageTitle": "titulo corto para la imagen (max 8 palabras, impactante)",
-  "subtitle": "subtitulo complementario (max 15 palabras)",
-
-  "visualData": {
-    "NOTA": "Incluir los campos segun el template seleccionado:",
-
-    "SI imageTemplate=metric": {
-      "metricValue": "el numero/KPI central con formato (ej: '85%', '3.2x', '40hrs')",
-      "metricLabel": "que mide este numero (ej: 'Reduccion de tiempo', 'ROI promedio')"
-    },
-
-    "SI imageTemplate=comparison": {
-      "comparisonBefore": ["item negativo 1 (max 8 palabras)", "item negativo 2", "item negativo 3"],
-      "comparisonAfter": ["item positivo 1 (max 8 palabras)", "item positivo 2", "item positivo 3"]
-    },
-
-    "SI imageTemplate=tips": {
-      "tips": ["consejo 1 claro y accionable (max 12 palabras)", "consejo 2", "consejo 3", "consejo 4"]
-    },
-
-    "SI imageTemplate=dashboard": {
-      "dashboardMetrics": [
-        {"label": "nombre KPI", "value": "valor con formato"},
-        {"label": "nombre KPI 2", "value": "valor"},
-        {"label": "nombre KPI 3", "value": "valor"},
-        {"label": "nombre KPI 4", "value": "valor"}
-      ]
-    }
-  },
-
-  "imagePrompt": "prompt para generar imagen con IA externa"
+  "composition": {
+    "background": { ... },
+    "layout": "...",
+    "padding": { ... },
+    "gap": 20,
+    "elements": [ ... ]
+  }
 }
 
-REGLAS CRITICAS de visualData:
-- Los campos de visualData DEBEN estar en la raiz del JSON, NO anidados dentro de visualData
-- Ejemplo CORRECTO para tips: { "imageTemplate": "tips", "imageTitle": "...", "tips": ["tip1", "tip2", "tip3"] }
-- Ejemplo CORRECTO para metric: { "imageTemplate": "metric", "imageTitle": "...", "metricValue": "85%", "metricLabel": "Reduccion de tiempo" }
-- Ejemplo CORRECTO para comparison: { "imageTemplate": "comparison", "imageTitle": "...", "comparisonBefore": ["..."], "comparisonAfter": ["..."] }
-- Ejemplo CORRECTO para dashboard: { "imageTemplate": "dashboard", "imageTitle": "...", "dashboardMetrics": [{"label":"...","value":"..."}] }
+IMPORTANTE: El campo "composition" es OBLIGATORIO. NO uses imageTemplate. Compone visualmente con bloques.
 
 Reglas del copy:
 - Max 150 palabras
@@ -194,34 +209,58 @@ function handlePostWriterLinkedin(input: Record<string, unknown>): unknown {
 
 ${DESIGN_CONTEXT}
 
-IMPORTANTE — SELECCION DE TEMPLATE:
-Analiza el contenido y selecciona el template visual que MEJOR represente el mensaje:
-- Datos numericos o KPI → "metric"
-- Antes/despues o problema/solucion → "comparison"
-- Lista de pasos o consejos → "tips"
-- Multiples metricas o resultados → "dashboard"
-- Frase reflexiva o insight poderoso → "statement"
-- Solo si ninguno aplica → "hero"
+## SISTEMA DE COMPOSICION VISUAL
+
+Compone la imagen del post usando BLOQUES VISUALES (NO uses imageTemplate).
+
+### Estructura de composicion:
+{
+  "background": { "type": "solid"|"gradient", "color": "#EFF6FF", "colors": [...], "angle": 135 },
+  "layout": "vertical-start"|"vertical-center",
+  "padding": { "horizontal": 60, "vertical": 60 },
+  "gap": 20,
+  "elements": [ ... bloques visuales ... ]
+}
+
+### Bloques disponibles:
+- **badge**: { "type": "badge", "text": "TEXTO", "color": "blue"|"orange"|"green", "style": "soft" }
+- **richText**: { "type": "richText", "segments": [{ "text": "...", "fontWeight": 900 }, { "text": "resaltado", "color": "#1D4ED8", "fontWeight": 900 }], "fontSize": 42, "lineHeight": 1.2 }
+- **checklist**: { "type": "checklist", "items": [{ "text": "...", "icon": "cross"|"check", "iconColor": "#9CA3AF" }], "gap": 14 }
+- **metric**: { "type": "metric", "value": "85%", "label": "...", "showGauge": true }
+- **ctaBar**: { "type": "ctaBar", "text": "...", "bgColor": "#1D4ED8", "textColor": "#FFFFFF", "fullWidth": true }
+- **card**: { "type": "card", "shadow": "sm", "padding": 20, "accentBorder": { "side": "left", "color": "#2563EB", "width": 4 }, "children": [...] }
+- **spacer**: { "type": "spacer", "flexGrow": 1 } (empuja CTA al fondo)
+- **logo**: { "type": "logo", "variant": "full", "position": "bottom" }
+- **quote**: { "type": "quote", "text": "...", "fontSize": 38, "decorativeMarks": true }
+- **comparison**: { "type": "comparison", "before": { "label": "ANTES", "items": [...] }, "after": { "label": "AHORA", "items": [...] } }
+- **sparkline**: { "type": "sparkline", "data": [20,35,70], "color": "#2563EB" }
+- **divider**: { "type": "divider", "style": "gradient", "colors": ["#2563EB", "#F97316"] }
+- **icon**: { "type": "icon", "emoji": "📊", "size": 48, "bgColor": "rgba(37,99,235,0.12)", "bgRadius": 12 }
+- **image**: { "type": "image", "src": "/brand/logo.png", "width": 200, "borderRadius": 12 }
+
+### Reglas de composicion:
+1. SIEMPRE incluir logo con position "bottom"
+2. Layout "vertical-start" + spacer flexGrow:1 para empujar CTA al fondo
+3. Badge style "soft" para fondos claros
+4. richText SIEMPRE con segmentos multicolor
+5. Maximo 3 colores de acento
+6. Animacion staggered: badge→titulo→contenido→CTA
 
 Responde con JSON:
 {
   "copy": "texto del post listo para publicar",
   "hashtags": ["#hashtag1", "#hashtag2", "#hashtag3"],
   "variantB": "version alternativa del copy con hook diferente",
-  "brandNote": "nota si algo se aleja del tono",
-  "imageTemplate": "metric|comparison|tips|dashboard|statement|hero",
-  "imageTitle": "titulo corto para la imagen (max 8 palabras)",
-  "subtitle": "subtitulo complementario (max 15 palabras)",
-  "metricValue": "solo si imageTemplate=metric, el KPI central (ej: '85%')",
-  "metricLabel": "solo si imageTemplate=metric, que mide (ej: 'Reduccion de tiempo')",
-  "comparisonBefore": ["solo si imageTemplate=comparison, 3 items negativos cortos"],
-  "comparisonAfter": ["solo si imageTemplate=comparison, 3 items positivos cortos"],
-  "tips": ["solo si imageTemplate=tips, 3-5 consejos accionables cortos"],
-  "dashboardMetrics": [{"label":"nombre","value":"valor"}, "solo si imageTemplate=dashboard, 4 KPIs"],
-  "imagePrompt": "prompt para generar imagen con IA externa, formato 16:9"
+  "composition": {
+    "background": { ... },
+    "layout": "...",
+    "padding": { ... },
+    "gap": 20,
+    "elements": [ ... ]
+  }
 }
 
-NOTA: Solo incluye los campos de datos visuales que corresponden al template seleccionado. No incluyas campos vacios.
+IMPORTANTE: El campo "composition" es OBLIGATORIO. NO uses imageTemplate.
 
 Reglas:
 - 200-400 palabras

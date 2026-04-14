@@ -58,7 +58,78 @@ export function VisualEditor({
   onUpdateCarouselProps,
   onUpdateReelProps,
 }: VisualEditorProps) {
-  // ── Post Editor ──
+  // ── Post Editor (Composition mode) ──
+  if (contentType === "post" && postProps && onUpdatePostProps && postProps.composition) {
+    const comp = postProps.composition;
+    const elementCount = comp.elements?.length ?? 0;
+    const elementTypes = comp.elements?.map((e: { type: string }) => e.type) ?? [];
+
+    return (
+      <div className="space-y-4">
+        <div>
+          <SectionLabel>Modo Composicion</SectionLabel>
+          <div className="bg-dc-blue-50 border border-dc-blue-600/20 rounded-xl p-3 text-xs text-dc-blue-700">
+            <div className="font-semibold mb-1">Composicion libre — {elementCount} elementos</div>
+            <div className="text-[10px] text-dc-gray-600">
+              Layout: {comp.layout ?? "vertical-spread"} | Fondo: {comp.background?.type ?? "solid"}
+            </div>
+            <div className="flex flex-wrap gap-1 mt-2">
+              {elementTypes.map((t: string, i: number) => (
+                <span key={i} className="bg-white px-2 py-0.5 rounded text-[10px] font-medium text-dc-gray-700 border border-dc-gray-200">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-dc-gray-50 border border-dc-gray-200 rounded-xl p-3">
+          <div className="text-[11px] text-dc-gray-500 mb-2">
+            Usa el <strong>Chat de Diseno</strong> o el <strong>Editor de Codigo</strong> para modificar la composicion.
+          </div>
+          <div className="text-[10px] text-dc-gray-400">
+            Ejemplo: &quot;Cambia el fondo a naranja claro&quot; o &quot;Agrega un checklist con 3 items&quot;
+          </div>
+        </div>
+
+        {/* Variant toggle still useful */}
+        <div>
+          <SectionLabel>Variante</SectionLabel>
+          <div className="flex gap-2">
+            {(["dark", "light"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => onUpdatePostProps({ variant: v })}
+                className={`flex-1 text-xs py-2 rounded-xl transition-all capitalize ${
+                  postProps.variant === v
+                    ? "bg-dc-blue-50 text-dc-blue-600 border border-dc-blue-600"
+                    : "bg-dc-gray-100 text-dc-gray-600 border border-transparent"
+                }`}
+              >
+                {v === "dark" ? "Oscuro" : "Claro"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Switch to legacy mode */}
+        <div>
+          <button
+            onClick={() => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { composition: _, ...rest } = postProps;
+              onUpdatePostProps({ ...rest, composition: undefined } as Partial<DCPostVisualProps>);
+            }}
+            className="text-[11px] text-dc-gray-400 hover:text-dc-gray-600 underline"
+          >
+            Cambiar a modo template clasico
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Post Editor (Legacy template mode) ──
   if (contentType === "post" && postProps && onUpdatePostProps) {
     return (
       <div className="space-y-4">
@@ -110,9 +181,9 @@ export function VisualEditor({
             {ANIMATIONS.map((a) => (
               <button
                 key={a.value}
-                onClick={() => onUpdatePostProps({ enterAnimation: a.value } as Partial<DCPostVisualProps>)}
+                onClick={() => onUpdatePostProps({ enterAnimation: a.value as DCPostVisualProps["enterAnimation"] })}
                 className={`text-xs px-2.5 py-1 rounded-lg transition-all ${
-                  (postProps as unknown as Record<string, unknown>).enterAnimation === a.value
+                  postProps.enterAnimation === a.value
                     ? "bg-dc-blue-50 text-dc-blue-600 border border-dc-blue-600"
                     : "bg-dc-gray-100 text-dc-gray-600 border border-transparent hover:bg-dc-gray-200"
                 }`}

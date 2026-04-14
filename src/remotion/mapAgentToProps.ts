@@ -16,6 +16,8 @@ interface PostData {
   comparisonAfter?: string[];
   tips?: string[];
   dashboardMetrics?: Array<{ label: string; value: string }>;
+  // New composition mode
+  composition?: Record<string, unknown>;
 }
 
 interface ReelData {
@@ -94,6 +96,15 @@ function extractMetrics(copy: string): Array<{ label: string; value: string }> {
 }
 
 export function mapPostToRemotionProps(data: PostData): DCPostVisualProps {
+  // New composition mode — pass through directly
+  if (data.composition) {
+    return {
+      template: "hero", // placeholder, ignored when composition is set
+      title: data.imageTitle || "DataCore",
+      composition: data.composition as unknown as DCPostVisualProps["composition"],
+    };
+  }
+
   const template = (data.imageTemplate as DCTemplate) || "hero";
   const copy = data.copy || "";
 

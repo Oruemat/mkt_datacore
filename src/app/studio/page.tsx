@@ -221,6 +221,7 @@ export default function StudioPage() {
       comparisonAfter: generatedComparisonAfter,
       tips: generatedTips,
       dashboardMetrics: generatedDashboardMetrics,
+      composition: postPropsOverrides.composition as Record<string, unknown> | undefined,
     });
     return { ...base, ...postPropsOverrides } as typeof base;
   }, [contentType, generatedCopy, generatedHashtags, generatedImageTemplate, generatedImageTitle, generatedSubtitle, currentPlatform, generatedMetricValue, generatedMetricLabel, generatedComparisonBefore, generatedComparisonAfter, generatedTips, generatedDashboardMetrics, postPropsOverrides]);
@@ -282,17 +283,24 @@ export default function StudioPage() {
       const jsonBlocks = findJsonBlocks(content);
 
       for (const json of jsonBlocks) {
-        // Post
+        // Post (with composition or legacy template)
         if (json.copy && typeof json.copy === "string") {
           setGeneratedCopy(json.copy as string);
           if (json.hashtags) setGeneratedHashtags(json.hashtags as string[]);
           if (json.variantB) setGeneratedVariantB(json.variantB as string);
           if (json.visualSuggestion) setGeneratedVisualSuggestion(json.visualSuggestion as string);
           if (json.imagePrompt) setGeneratedImagePrompt(json.imagePrompt as string);
-          if (json.imageTemplate) setGeneratedImageTemplate(json.imageTemplate as string);
           if (json.imageTitle) setGeneratedImageTitle(json.imageTitle as string);
           if (json.subtitle) setGeneratedSubtitle(json.subtitle as string);
-          // Structured visual data for rich templates
+          // New composition mode — pass through to overrides
+          if (json.composition && typeof json.composition === "object") {
+            setPostPropsOverrides((prev) => ({
+              ...prev,
+              composition: json.composition as Record<string, unknown>,
+            }));
+          }
+          // Legacy template mode (fallback)
+          if (json.imageTemplate) setGeneratedImageTemplate(json.imageTemplate as string);
           if (json.metricValue) setGeneratedMetricValue(json.metricValue as string);
           if (json.metricLabel) setGeneratedMetricLabel(json.metricLabel as string);
           if (json.comparisonBefore && Array.isArray(json.comparisonBefore)) setGeneratedComparisonBefore(json.comparisonBefore as string[]);
@@ -638,10 +646,18 @@ export default function StudioPage() {
     variant: remotionPostProps?.variant,
     copy: generatedCopy || undefined,
     styles: (postPropsOverrides.styles as Record<string, unknown>) || undefined,
-  }), [contentType, remotionPostProps, generatedImageTemplate, generatedImageTitle, generatedSubtitle, generatedMetricValue, generatedMetricLabel, generatedComparisonBefore, generatedComparisonAfter, generatedTips, generatedDashboardMetrics, generatedCopy, postPropsOverrides.styles]);
+    composition: (remotionPostProps?.composition as unknown as Record<string, unknown>) || (postPropsOverrides.composition as unknown as Record<string, unknown>) || undefined,
+  }), [contentType, remotionPostProps, generatedImageTemplate, generatedImageTitle, generatedSubtitle, generatedMetricValue, generatedMetricLabel, generatedComparisonBefore, generatedComparisonAfter, generatedTips, generatedDashboardMetrics, generatedCopy, postPropsOverrides.styles, postPropsOverrides.composition]);
 
-  const handleChatCommands = useCallback((commands: Array<{ action: string; props?: Record<string, unknown>; styles?: Record<string, unknown> }>) => {
+  const handleChatCommands = useCallback((commands: Array<{ action: string; props?: Record<string, unknown>; styles?: Record<string, unknown>; composition?: Record<string, unknown> }>) => {
     for (const cmd of commands) {
+      // New composition mode
+      if (cmd.action === "updateComposition" && cmd.composition) {
+        setPostPropsOverrides((prev) => ({
+          ...prev,
+          composition: cmd.composition,
+        }));
+      }
       if (cmd.action === "updateProps" && cmd.props) {
         if (cmd.props.template) setGeneratedImageTemplate(cmd.props.template as string);
         if (cmd.props.title) setGeneratedImageTitle(cmd.props.title as string);
@@ -653,9 +669,9 @@ export default function StudioPage() {
         if (cmd.props.tips) setGeneratedTips(cmd.props.tips as string[]);
         if (cmd.props.dashboardMetrics) setGeneratedDashboardMetrics(cmd.props.dashboardMetrics as Array<{ label: string; value: string }>);
         if (cmd.props.variant) setPostPropsOverrides((prev) => ({ ...prev, variant: cmd.props!.variant }));
+        if (cmd.props.enterAnimation) setPostPropsOverrides((prev) => ({ ...prev, enterAnimation: cmd.props!.enterAnimation }));
       }
       if (cmd.action === "updateStyles" && cmd.styles) {
-        // Merge style overrides into postPropsOverrides under the "styles" key
         setPostPropsOverrides((prev) => ({
           ...prev,
           styles: { ...((prev.styles as Record<string, unknown>) || {}), ...cmd.styles },
@@ -832,6 +848,21 @@ export default function StudioPage() {
       postProps={remotionPostProps}
       carouselProps={remotionCarouselProps}
       reelProps={remotionReelProps}
+      onUpdatePostProps={(updates) => {
+        setPostPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: remotionPostProps?.template || null, changes: updates as Record<string, unknown> });
+      }}
+      onUpdateCarouselProps={(updates) => {
+        setCarouselPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: null, changes: updates as Record<string, unknown> });
+      }}
+      onUpdateReelProps={(updates) => {
+        setReelPropsOverrides((prev) => ({ ...prev, ...updates }));
+        setHasUnappliedEdits(true);
+        logDesignChange({ source: "editor", action: "updateProps", contentType, template: null, changes: updates as Record<string, unknown> });
+      }}
     />
   ) : undefined;
 
