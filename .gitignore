@@ -40,3 +40,7 @@ next-env.d.ts
 /editor-pro-max-main/
 /branding_kit/
 /data/
+
+# referencias temporales del resultado esperado del Studio
+/presentacion/
+/public/brand/publicacion_ideal.png
